@@ -1,0 +1,34 @@
+[
+    {
+        "name":"系统管理(应用一)",
+        "id":"sys001",
+        "menuList":[
+            {
+                "mName":"用户管理",
+                "url":"/sys/user"
+            },
+            {
+                "mName":"角色管理",
+                "url":"/sys/role"
+            },
+            {
+                "mName":"菜单管理",
+                "url":"/sys/menu"
+            }
+        ]
+    },
+    {
+        "name":"车辆管理(应用二)",
+        "id":"car002",
+        "menuList":[
+            {
+                "mName":"车辆列表",
+                "url":"/car/list"
+            },
+            {
+                "mName":"车辆类型",
+                "url":"/car/type"
+            }
+        ]
+    }
+]
