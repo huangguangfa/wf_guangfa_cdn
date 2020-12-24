@@ -18,5 +18,6 @@ module.exports = {
     "Vue": true,
     "Vuex": true,
     "VueRouter": true,
+    'axios':true
   },
 }

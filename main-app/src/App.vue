@@ -1,26 +1,24 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="root" class="main-container">
+        <HOME></HOME>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import HOME from './components/home'
 export default {
-  name: 'rootView',
-  components: {
-    HelloWorld
-  },
-  props: {
-    loading: Boolean,
-    content: String 
-  }
+    name: "rootView",
+    components:{
+        HOME
+    },
+    props: {
+        loading: Boolean,
+        content: String 
+    }
 }
 </script>
 
 <style src="./style/reaet.css"></style>
-<style>
+<style lang="less">
     .main-container{width: 100%; height: 100%;}
 </style>

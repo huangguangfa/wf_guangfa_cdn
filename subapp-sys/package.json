@@ -1,8 +1,8 @@
 {
-  "name": "main-app",
+  "name": "subapp-sys",
   "version": "0.1.0",
   "private": true,
-  "port": 6001,
+  "port": 6002,
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -12,9 +12,7 @@
     "core-js": "^3.6.5",
     "less": "^4.0.0",
     "less-loader": "^7.2.0",
-    "qiankun": "^2.3.4",
-    "vue": "^2.6.11",
-    "vuex-persistedstate": "^4.0.0-beta.1"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
