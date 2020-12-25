@@ -1,0 +1,12 @@
+.torouter{
+    width: 150px; font-size: 15px; margin-left: 10px;
+    border: 1px solid #eee; text-align: center; border-radius: 5px; cursor: pointer;
+    background: #fff;color:lightpink ; 
+}
+.carType{  background: lightpink; padding: 20px;}
+.prompt{ color: magenta;}
+.toApplay{
+    width: 170px;border-radius: 10px;height: 30px;line-height: 30px;margin-top: 20px;color: lightpink;
+    font-size: 12px;padding:0 10px; box-sizing: border-box; background: #fff;
+    &:hover{ background: rgb(209, 128, 209);color: #fff;cursor: pointer;}
+}

@@ -32,7 +32,7 @@
     export default{
         data(){
             return {
-                systemModule:systemModule
+                systemModule:systemModule,
             }
         },
         created(){
@@ -41,9 +41,19 @@
                 routerGo(this.systemModule[0].menuList.url)
             }
         },
+        watch:{
+            $route(to){
+                let curSys = to.path.match(/[/]\S*?[/]/)[0];
+                let currentSysData = this.systemModule.find( item => item.typeRouter.includes(curSys));
+                if( this.$store.getters.currentSystem !== currentSysData.id ){
+                    this.$store.commit('system/SET_CURRENTSYSTEM_VALUE',currentSysData.id);
+                    this.$store.commit('system/SET_SYSTEMMENULIST_VALUE',currentSysData.menuList);
+                }
+            }
+        },
         methods:{
             toPage(url){
-              window.open(url)
+                window.open(url)
             },
             switchSystem(sys){
                 if(this.$store.getters.currentSystem === sys.id){ return false }

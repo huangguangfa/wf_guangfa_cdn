@@ -13,14 +13,14 @@ const noAuthApps = [
     routerBase: "/sys",
     data: []
   },
-  {
-    module: "subapp-login",
-    defaultRegister: false,
-    devEntry: "http://localhost:6003",
-    depEntry: "http://106.54.70.48:6003",
-    routerBase: "/login",
-    data: []
-  },
+  // {
+  //   module: "subapp-login",
+  //   defaultRegister: false,
+  //   devEntry: "http://localhost:6003",
+  //   depEntry: "http://106.54.70.48:6003",
+  //   routerBase: "/login",
+  //   data: []
+  // },
   {
     module: "subapp-car",
     defaultRegister: false,

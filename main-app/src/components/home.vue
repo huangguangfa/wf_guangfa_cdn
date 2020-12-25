@@ -3,8 +3,6 @@
         <!-- 头部 -->
         <v-header v-show="$store.getters.loginStatus"></v-header>
         <div class="main-content">
-            <!-- 左侧菜单栏 -->
-            <v-Sidebar v-show="$store.getters.loginStatus"></v-Sidebar>
             <!-- 子应用渲染区 -->
             <div class="page-conten">
                 <!-- qiankun2.0  container 模式-->
@@ -16,10 +14,9 @@
 </template>
 <script>
     import vHeader from './Header'
-    import vSidebar from './Sidebar.vue'
     export default{
         components:{
-            vSidebar,vHeader
+            vHeader
         },
     }
 </script>
@@ -27,7 +24,7 @@
     .home-container{
        height: 100%;
         .main-content{
-            width: 100%;display: flex; 
+            width: 100%;display: flex; height: 100%;
             .page-conten{
                 width: 100%; height: 100%; background: #f0f0f0; 
             }

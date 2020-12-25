@@ -10,10 +10,3 @@ export default {
 }
 </script>
 <style src="./style/reaet.css"></style>
-
-<style lang="less" scoped>
-  #sys-app{
-    padding: 20px; height: 500px;
-    border: 5px solid yellow;
-  }
-</style>

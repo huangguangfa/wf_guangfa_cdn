@@ -1,6 +1,7 @@
+console.log('11111111')
+
 import "./public-path";
 import { lifeCycle, render } from "./life-cycle";
-
 /**
  * @name 统一注册外部插件、样式、服务等
  */

@@ -2,6 +2,7 @@
     {
         "name":"系统管理(应用一)",
         "id":"sys001",
+        "typeRouter":"/sys/",
         "menuList":[
             {
                 "mName":"用户管理",
@@ -20,6 +21,7 @@
     {
         "name":"车辆管理(应用二)",
         "id":"car002",
+        "typeRouter":"/car/",
         "menuList":[
             {
                 "mName":"车辆列表",

@@ -1,0 +1,28 @@
+.normal {
+  font-family: Georgia, sans-serif;
+  text-align: center;
+}
+.car {
+  display: flex;
+  width: 100%;height: 100vh;font-size: 20px;
+}
+.sysTitle{
+  width: 150px;
+  font-size: 12px;
+  border: 1px solid lawngreen; text-align: center; 
+  background: lawngreen;
+}
+.carPageContent{
+  width: 100%;height: 100%;
+  border: 3px solid lawngreen;
+  padding: 10px; box-sizing: border-box;
+}
+.sidebar{
+  background: #fff;margin-right:10px;
+  li{
+    padding: 10px; cursor: pointer;
+    text-align: center; line-height: 20px; 
+    border: 1px solid #eee;
+  }
+  .currentRouter{ background: coral; color: #fff; }
+}
