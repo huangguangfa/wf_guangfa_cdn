@@ -4,6 +4,7 @@ sys/
 car/
 login/
 app/
+user/
 
 dist/
 npm-debug.log/
