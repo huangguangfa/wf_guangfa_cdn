@@ -62,9 +62,8 @@
                 routerGo(sys.menuList[0].url)
             },
             outLogin(){
-                this.$confirm({
-                    icon:'gf-shanchu',
-                    content:'你确定要退出登陆吗？'
+                this.$confirm('你确定要退出登陆吗',{
+                    type: 'warning'
                 }).then( confirm =>{
                     this.$store.commit('user/SET_LOGIN_VALUE',false);
                     routerGo('/login')
