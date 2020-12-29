@@ -5,9 +5,30 @@
 
 > yarn start 启动所有项目
 
-##### 目前主应用是vue、login也是一个单体项目也是基于vue、sys系统管理也是基于vue、然后car车辆管理是基于react
+### 目前主应用是vue、login也是一个单体项目也是基于vue、sys系统管理也是基于vue、然后car车辆管理是基于react
 
 
 > prot 6002 系统子应用(vue)
 > prot 6003 登陆子应用(vue)
 > prot 6004 车辆子应用(react)
+> prot 6004 用户管理应用(vue)
+
+### 运行微前端基座所有应用
+``` 
+yarn start 
+
+```
+- 如果要在微服务运行指定子应用、在main-app文件夹下core -> app-config.js 注释调某个子应用（略显的low后期维护吧）
+
+
+### 不运行在微前端基座、单独运行某个子应用
+``` 
+cd 指定子应用文件夹下
+yarn start
+
+```
+
+### vue项目都是 vue + vue-router + vuex + axios 的配置选项
+
+### react 是基于 UmiJs进行搭建的一个react框架
+

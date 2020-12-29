@@ -19,7 +19,18 @@
         ]
     },
     {
-        "name":"车辆管理(应用二)",
+        "name":"用户管理(应用二)",
+        "id":"user003",
+        "typeRouter":"/user/",
+        "menuList":[
+            {
+                "mName":"车辆列表",
+                "url":"/user/list"
+            }
+        ]
+    },
+    {
+        "name":"车辆管理(应用三)",
         "id":"car002",
         "typeRouter":"/car/",
         "menuList":[

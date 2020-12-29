@@ -82,7 +82,7 @@ const qianKunStart = ( list ) => {
             ]
         },
     )
-
+    console.log(store.getters.loginStatus)
     /**
      * @name 设置默认进入的子应用
      * @param {String} 需要进入的子应用路由前缀

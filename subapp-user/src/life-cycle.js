@@ -71,7 +71,7 @@ const render = ({ routerBase, container } = {}) => {
         router,
         store,
         render: h => h(App)
-    }).$mount(container ? container.querySelector("#sys") : "#sys");
+    }).$mount(container ? container.querySelector("#user") : "#user");
 };
 
 export { lifeCycle, render };

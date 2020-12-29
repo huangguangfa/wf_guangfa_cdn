@@ -18,16 +18,16 @@
             return{
                 menuList:[
                     {
-                        "mName":"用户管理",
-                        "url":"/user"
+                        "mName":"用户列表",
+                        "url":"/list"
                     },
                     {
-                        "mName":"角色管理",
-                        "url":"/role"
+                        "mName":"姓名维护",
+                        "url":"/name"
                     },
                     {
-                        "mName":"菜单管理",
-                        "url":"/menu"
+                        "mName":"关系维护",
+                        "url":"/relation"
                     }
                 ]
             }
@@ -51,7 +51,7 @@
                 text-align: center; line-height: 20px; 
                 border: 1px solid #eee;
             }
-            .currentRouter{ background: coral; color: #fff; }
+            .currentRouter{ background: #409EFF; color: #fff; }
         }
         .sys_page_content{
             width: 100%;
