@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 shFilePath=$(cd `dirname $0`; pwd)
-#系统列表名称
-sysList=('app' 'car' 'login' 'sys' 'all')
+# 系统列表名称
+sysList=('app' 'car' 'login' 'sys' 'user' 'all')
 IP="106.54.70.48"
 #获取当前分支
 branch=$(git symbolic-ref --short HEAD)
@@ -23,9 +23,12 @@ fi
 
 #没有buildFile文件夹的话就新建一个
 if [ -d "$shFilePath/buildFile" ]; then
+    echo '有文件夹'
     rm -rf './buildFile/'
     mkdir "buildFile"  
-fi
+else
+    mkdir "buildFile" 
+fi;
 
 #项目文件夹名称
 fileName=""
@@ -34,6 +37,7 @@ function build() {
     cd $1
     echo "\033[32m $1准备打包... \033[0m" 
     yarn build 
+    echo $1/$2
     mv $shFilePath/$1/$2 $shFilePath/buildFile
     echo "\033[32m $1打包成功、包移动至buildFile \033[0m" 
 }
@@ -53,6 +57,8 @@ function getFileName() {
             fileName="subapp-login";;
         'sys')
             fileName="subapp-sys";;
+        'user')
+            fileName="subapp-user";;
         *)
             echo "error"
     esac
@@ -74,7 +80,7 @@ else
 fi
 
 #部署
-uploadServe 
+#uploadServe 
 
 
 

@@ -7,7 +7,7 @@
 
 ### 目前主应用是vue、login也是一个单体项目也是基于vue、sys系统管理也是基于vue、然后car车辆管理是基于react
 
-
+> prot 6001 主应用应用(vue)
 > prot 6002 系统子应用(vue)
 > prot 6003 登陆子应用(vue)
 > prot 6004 车辆子应用(react)
@@ -22,6 +22,7 @@ yarn start
 
 
 ### 不运行在微前端基座、单独运行某个子应用
+
 ``` 
 cd 指定子应用文件夹下
 yarn start
