@@ -33,3 +33,5 @@ yarn start
 
 ### react 是基于 UmiJs进行搭建的一个react框架
 
+> 目前主应用使用cdn方式、把一些子应用的公共东西放到主应用去加载出来、比如vue、element、axios、vue-router、vuex等、子应用如果运行在微前端的基座上则使用主应用挂载到widows里面的公共模块、子应用也支持单独运行、单独运行的话子应用需要自己去加载cdn的公共模块
+
