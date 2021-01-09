@@ -56,7 +56,7 @@
         .sys_page_content{
             width: 100%;
             padding: 20px;
-            border: 5px solid yellow;
+            // border: 5px solid yellow;
         }
     }
     

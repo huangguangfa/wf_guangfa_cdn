@@ -91,3 +91,5 @@ input,textarea{
 i{
     font-style: normal;
 }
+.pagination{display: flex;justify-content: center;margin-top: 20px;}
+.right_content{ background: #fff;border: 2px solid #ededed; padding: 20px; box-sizing: border-box; border-radius: 5px; }
