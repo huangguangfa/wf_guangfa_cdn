@@ -4,6 +4,7 @@ shFilePath=$(cd `dirname $0`; pwd)
 # 系统列表名称
 sysList=('app' 'car' 'login' 'sys' 'user' 'all')
 IP="106.54.70.48"
+uploadPath="/gf_docker/nginx/web"
 #获取当前分支
 branch=$(git symbolic-ref --short HEAD)
 #开始
@@ -23,7 +24,6 @@ fi
 
 #没有buildFile文件夹的话就新建一个
 if [ -d "$shFilePath/buildFile" ]; then
-    echo '有文件夹'
     rm -rf './buildFile/'
     mkdir "buildFile"  
 else
@@ -43,7 +43,8 @@ function build() {
 }
 #上传服务器
 function uploadServe() {
-    rsync -a -e "ssh -p 22" $shFilePath/buildFile*  root@$IP:/home/
+    echo "\033[32m 准备上传服务器,地址：$uploadPath \033[0m"
+    rsync -a -e "ssh -p 22" $shFilePath/buildFile*  root@$IP:$uploadPath
     echo "\033[32m 自动化部署成功！ \033[0m"
 }
 #单个项目部署文件名转换
@@ -80,7 +81,9 @@ else
 fi
 
 #部署
-#uploadServe 
+uploadServe 
+
+# /gf_docker/nginx/web/buildFile
 
 
 

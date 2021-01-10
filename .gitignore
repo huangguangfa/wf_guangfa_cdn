@@ -5,6 +5,7 @@ car/
 login/
 app/
 user/
+buildFile/
 
 dist/
 npm-debug.log/

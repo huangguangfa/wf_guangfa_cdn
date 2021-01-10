@@ -7,11 +7,11 @@
 
 ### 目前主应用是vue、login也是一个单体项目也是基于vue、sys系统管理也是基于vue、然后car车辆管理是基于react
 
-> prot 6001 主应用应用(vue)
-> prot 6002 系统子应用(vue)
-> prot 6003 登陆子应用(vue)
-> prot 6004 车辆子应用(react)
-> prot 6004 用户管理应用(vue)
+> prot 6001 app-主应用应用(vue)
+> prot 6002 sys-系统子应用(vue)
+> prot 6003 login-登陆子应用(vue)
+> prot 6004 car-车辆子应用(react)
+> prot 6005 user-用户管理应用(vue)
 
 ### 运行微前端基座所有应用
 ``` 
@@ -34,4 +34,14 @@ yarn start
 ### react 是基于 UmiJs进行搭建的一个react框架
 
 > 目前主应用使用cdn方式、把一些子应用的公共东西放到主应用去加载出来、比如vue、element、axios、vue-router、vuex等、子应用如果运行在微前端的基座上则使用主应用挂载到widows里面的公共模块、子应用也支持单独运行、单独运行的话子应用需要自己去加载cdn的公共模块
+
+docker run --detach \
+ --name w_nginx_app --restart=always --privileged=true \
+ -p 6001:6001 \
+ -v /gf_docker/nginx/web:/web:rw\
+ -v /gf_docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf/:rw\
+ -v /gf_docker/nginx/conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf:rw\
+ -v /gf_docker/nginx/logs:/var/log/nginx/:rw\
+ -v /gf_docker/nginx/ssl:/ssl/:rw\
+ -d nginx
 

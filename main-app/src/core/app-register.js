@@ -44,6 +44,7 @@ const qianKunStart = ( list ) => {
     let apps = []; // 子应用数组盒子
     let defaultApp = null; // 默认注册应用路由前缀
     let isDev = process.env.NODE_ENV === 'development'; // 根据开发环境|线上环境加载不同entry
+    console.log('isDev',isDev)
     //配置参考文档https://qiankun.umijs.org/zh/api#registermicroappsapps-lifecycles
     list.forEach(i => { 
         apps.push({
