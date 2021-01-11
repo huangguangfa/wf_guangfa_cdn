@@ -27,7 +27,7 @@ const appStore = ( initGlobalState ) => {
     onGlobalStateChange((value) => {
         console.log('[onGlobalStateChange - master]:', value);
         //进行登陆成功
-        if(value.ignore === 'subapp-login'){
+        if( value.ignore === 'subapp-login' ){
             store.commit('user/SET_LOGIN_VALUE',true)
             store.commit('system/SET_CURRENTSYSTEM_VALUE',systemModule[0].id);
             store.commit('system/SET_SYSTEMMENULIST_VALUE',systemModule[0].menuList);

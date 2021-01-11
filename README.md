@@ -35,13 +35,3 @@ yarn start
 
 > 目前主应用使用cdn方式、把一些子应用的公共东西放到主应用去加载出来、比如vue、element、axios、vue-router、vuex等、子应用如果运行在微前端的基座上则使用主应用挂载到widows里面的公共模块、子应用也支持单独运行、单独运行的话子应用需要自己去加载cdn的公共模块
 
-docker run --detach \
- --name w_nginx_app --restart=always --privileged=true \
- -p 6001:6001 \
- -v /gf_docker/nginx/web:/web:rw\
- -v /gf_docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf/:rw\
- -v /gf_docker/nginx/conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf:rw\
- -v /gf_docker/nginx/logs:/var/log/nginx/:rw\
- -v /gf_docker/nginx/ssl:/ssl/:rw\
- -d nginx
-

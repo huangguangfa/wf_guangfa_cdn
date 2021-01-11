@@ -1,6 +1,5 @@
 import { registerMicroApps, runAfterFirstMounted, setDefaultMountApp, start, initGlobalState } from "qiankun";
 import store from "../store";
-
 /**
  * @name 导入想传递给子应用的方法，其他类型的数据皆可按此方式传递
  * @description emit主要为提供子应用调用主应用方法的途径
@@ -41,12 +40,11 @@ const qianKunStart = ( list ) => {
     /**
      * @name 处理子应用注册表数据
      */
-    let apps = []; // 子应用数组盒子
+    let apps = []; //子应用数组盒子
     let defaultApp = null; // 默认注册应用路由前缀
     let isDev = process.env.NODE_ENV === 'development'; // 根据开发环境|线上环境加载不同entry
-    console.log('isDev',isDev)
     //配置参考文档https://qiankun.umijs.org/zh/api#registermicroappsapps-lifecycles
-    list.forEach(i => { 
+    list.forEach( i => { 
         apps.push({
             name: i.module, //微应用的名称
             entry: isDev ? i.devEntry : i.depEntry, //微应用的 entry 地址
@@ -57,12 +55,10 @@ const qianKunStart = ( list ) => {
         //初始化第一个加载的应用
         if (i.defaultRegister) defaultApp = i.routerBase;
     });
-
     /**
      * @name 注册子应用
      * @param {Array} list subApps
      */
-    
     registerMicroApps(
         apps,
         {
@@ -83,7 +79,6 @@ const qianKunStart = ( list ) => {
             ]
         },
     )
-    console.log(store.getters.loginStatus)
     /**
      * @name 设置默认进入的子应用
      * @param {String} 需要进入的子应用路由前缀

@@ -1,5 +1,3 @@
-console.log('11111111')
-
 import "./public-path";
 import { lifeCycle, render } from "./life-cycle";
 /**
