@@ -35,7 +35,7 @@ const STORE = {};
 * @param {Object} data 按照你设定的内容格式数据
 */
 const setState = ( data ) => {
-    if ( !Object.prototype.toString.call( data ) === '[object Object]' ) {
+    if ( !(Object.prototype.toString.call( data ) === '[object Object]') ) {
         throw Error('data必须是对象格式');
     }
     STORE.setGlobalState?.({
