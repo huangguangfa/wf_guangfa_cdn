@@ -19,23 +19,22 @@
 4、微应用仓库独立，前后端可独立开发，部署完成后主框架自动完成同步更新
 
 ### 需求分析
- - 除了这些、从项目的需求和系统的数量微前端非常适合我们、我们一共有七个系统、每个用户因为角色权限、所管理的系统也是不一样的、张三负责两个系统权限、李四负责一个系统、如果全部系统写到一个项目可想而至...除了代码量...维护成本...都是非常大的！下面放一张我们的系统UI图
- 
-![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/401ad52746e1460ba31dc3cc0434301c~tplv-k3u1fbpfcp-watermark.image)
+ - 除了这些、从项目的需求和系统的数量微前端非常适合我们、我们一共有七个系统、每个用户因为角色权限、所管理的系统也是不一样的、张三负责两个系统权限、李四负责一个系统、也可能王五负责一个系统的其中某几个菜单权限等...如果全部系统写到一个项目可想而至...代码量...项目维护..性能.都是非常难折腾！下面放一张我们的系统UI图
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/433648f7ea4a4d94b664c9f6683adac5~tplv-k3u1fbpfcp-watermark.image)
 由于那啥所以打了码、顶部是所有系统、左侧是当前系统的菜单栏、从UI的设计图上看这个项目是很适合微前端！后面我会用基座（微前端环境）和子应用与主应用去介绍我的踩坑之路-😄
 
-## 技术选型与多项目的整体规划
+## 技术选型与项目的整体规划
 
 - vue、element、webpack、websocket、eslint、babel、qiankun2.0
 - 支持子应用独立运行和可运行在微前端基座方式
-- 主应用使用cdn统一管理公共静态资源，所有子应用运行在主应用基座上时共享此静态资源，大幅减小子应用体积，减少带宽消耗，减少重复资源消耗，大幅加快项目加载速度
+- 主应用使用cdn统一管理公共静态资源，所有子应用运行在基座上时共享此静态资源，大幅减小子应用体积，减少带宽消耗，减少重复资源消耗，大幅加快项目加载速度
 - 应用与应用之前可进行通信和跳转
 - 应用独立维护、互不依赖不耦合
 - 项目拆分但和单体的开发模式应该是差不多的、比如启动、打包、安装、依赖、部署（一键模式）
 - 编写一键部署脚本、先部署至测试服务器、测试通过直接发行到生产环境
 - 项目状态、公共数据的维护
 ## 主应用环境搭建（基座）
-- 主应用(vue脚手架搭建)、因为打算核心公共模块采用cdn方式、所以脚手架选择 ：``` Default ([Vue 2] babel, eslint)``` 主应用需要做的事情是：``` 对qiankun框架单独模块化封装导出核心方法、配置cdn方式加载核心模块 、添加 eslint 忽略指定全局变量、配置webpack的externals排除某些依赖，使用 cdn 资源代替```
+- 主应用(vue脚手架搭建)、因为打算核心公共模块采用cdn方式、所以脚手架选择 ：``` Default ([Vue 2] babel, eslint)``` 主应用需要做的事情是：``` 对qiankun框架单独模块化封装导出核心方法、配置cdn方式加载核心模块 、配置 eslint 忽略指定全局变量、配置webpack的externals排除某些依赖，使用 cdn 资源代替```
 ### 开始
 ``` javascript
 vue create main-app 
@@ -63,7 +62,7 @@ yarn add qiankun
     'axios':true
   }
   ```
-  配置了这个只是把代码校验忽略检测某些变量、而减少打包项目体积还要使用 ``` webpack ``` 的 ```externals``` [externals介绍](https://webpack.docschina.org/configuration/externals "externals")、简单来讲就是 ```打包的时候排除某些依赖，使用 cdn 资源代替 ``` 在vue.config.js里面配置
+  配置了这个只是把代码校验忽略检测某些变量、我们还需要配置下 ``` webpack 的 externals``` [externals介绍](https://webpack.docschina.org/configuration/externals "externals")、简单来讲就是 ```打包的时候排除某些依赖，使用 cdn 资源代替 ``` 在vue.config.js里面配置
   ``` javascript
   module.exports = {
     publicPath: '/',
@@ -84,7 +83,7 @@ yarn add qiankun
   
   这样我们的cdn方式加载核心模块就好了、接下来就是配置 ``` qiankun ``` 
   
-  - quankun配置、
+  - quankun配置
   
   	+ src里面新建一个core文件夹、分别创建 ``` app.config.js（管理子应用的注册信息）``` 和 ``` qiankun.js（这里统一导出启动qiankun的方法） ``` 还有 ``` app.store.js(管理qiankun的通信方法）```
     
@@ -96,7 +95,7 @@ yarn add qiankun
         name: "subapp-sys", //微应用的名称
         defaultRegister: true, //默认注册
         devEntry: "http://localhost:6002",//开发环境地址
-        depEntry: "http://106.54.70.48:6002",//生产环境地址
+        depEntry: "http://108.54.70.48:6002",//生产环境地址
         routerBase: "/sys", //激活规则路径
         data: []  //传入给子应用的数据
       },
@@ -160,31 +159,30 @@ export default quanKunStart;
 
 ```
 
-``` app.store.js ```
+``` app.store.js  ```
 ``` javascript
-let setGlobalStateMes = null
+let DISPATCHAPPLYMESSAGE = null;
+let GETAPPLYMESSAGE = null;
 const appStore = ( initGlobalState ) => {
-    //定义全局状态
+    //定义应用之间所接收的key、不然主应用不接收数据
     const initialState = {  
         data: '给子应用的测试数据',
         token: '',
         appsRefresh: false,
     };
     const { onGlobalStateChange, setGlobalState } = initGlobalState( initialState );
-    onGlobalStateChange( (data) => {
-        console.log('主应用收到消息', data);
-        
-    });
-    setGlobalStateMes = setGlobalState
+    dispatchApplyMessage = setGlobalState;
+    getApplyMessage = onGlobalStateChange;
 }
-//导出应用通信方法便于其他地方使用
+//导出应用通信方法
 export {
-    setGlobalStateMes
+    DISPATCHAPPLYMESSAGE,
+    GETAPPLYMESSAGE
 }
 export default appStore;
 ```
 
-- qiankun的通信是 initGlobalState 这个方法返回的 ``` onGlobalStateChange, setGlobalState ``` 接收和派发方法、另外需要注意的是、只有主应用注册了 ``` initGlobalState 才会附加到子应用接收的props里面、主应用没注册通信方法是没有的 ```
+> qiankun的通信是 initGlobalState 这个方法返回的 ``` onGlobalStateChange, setGlobalState ``` 接收和派发方法、另外需要注意的是 ``` 只有主应用注册了 initGlobalState 才会附加到子应用接收的props里面、主应用没注册通信方法是没有的 ``` 还有一个就是 ``` 如果你没先在 initGlobalState方法传入定义好的通信key、那其他应用传入给主应用的数据是接收不到的 ```
 
 - 在主应用的App.vue添加子应用的渲染区域
 ``` javascript
@@ -212,7 +210,126 @@ new Vue({
 }).$mount('#app')
 ```
 
-> 整个主应用（基座）配置完、可以发现并没有什么难度、qiankun给我提供了直接开箱即用的方便、剩下的我们就是去配置子应用了、配置子应用相对来说还要更简单些
+> 整个主应用（基座）配置完、可以发现并没有什么难度、qiankun给我提供了直接开箱即用的方便、剩下的我们就是去配置子应用了、配置子应用相对来说还要更简单些、接下来就是子应用的环境搭建了
+
+ ## 子应用环境
+ 
+ - 第一步使用官方脚手架把项目创建好、和主应用同理选择默认的 ``` Default ([Vue 2] babel ``` 进行创建项目
+   ```
+    vue create subapp-sys
+   ```
+ + 第二步我们改造下脚手架默认的模块和打包后的格式配置、还有给qiankun导出对应的生命周期函数 ``` 修改打包配置 -  vue.config.js ```
+ 
+    
+    ``` javascript
+    const { name } = require('./package');
+    module.exports = {
+      devServer: {
+        hot: true,
+        disableHostCheck: true,
+        port:6002,
+        overlay: {
+            warnings: false,
+            errors: true,
+        },
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        //防止单体项目刷新后404
+        historyApiFallback:true,
+    },
+      configureWebpack: {
+        output: {
+          library: `${name}-[name]`,
+          libraryTarget: 'umd',// 把微应用打包成 umd 库格式
+          jsonpFunction: `webpackJsonp_${name}`,
+        },
+      },
+    };
+   ```
+  - 第三步同src下创建一个导出qiankun的js文件、统一管理，名叫 ```life-cycle.js ```
+   
+    ``` javascript
+    import App from "./App.vue";
+    import store from "./store";
+    import selfRoutes from "./router";
+    //导入官方通信方法 和 主应用的一样把应用通信封装到一个js文件独立管理
+    import appStore from "./utils/app-store";
+
+    const __qiankun__ = window.__POWERED_BY_QIANKUN__;
+    let router = null;
+    let instance = null;
+
+    /**
+     * @name 导出qiankun生命周期函数
+     */
+    const lifeCycle = () => {
+      return {
+        async bootstrap() {},
+        //应用每次进入都会调用 mount 方法，通常我们在这里触发应用的渲染方法
+        async mount( props ) {
+            // 注册应用间通信
+            appStore(props);
+            // 注册微应用实例化函数
+            render(props);
+        },
+        //微应用卸载
+        async unmount() {
+            instance.$destroy?.();
+            instance = null;
+            router = null;
+        },
+      //主应用手动更新微应用
+        async update(props) {
+            console.log("update props", props);
+        }
+      };
+    };
+
+    //子应用实例化函数 routerBase container是通过主应用props传入过来的数据
+    const render = ({ routerBase, container } = {}) => {
+        Vue.config.productionTip = false;
+        router = new VueRouter({
+            base: __qiankun__ ? routerBase : "/",
+            mode: "history",
+            routes: selfRoutes
+        });
+        instance = new Vue({
+            router,
+            store,
+            render: h => h(App)
+        }).$mount(container ? container.querySelector("#sys") : "#sys");
+    };
+
+    export { lifeCycle, render };
+    ```
+- 第四步 接下来src目录新增 ```public-path.js ```
+    ```javascript
+    if (window.__POWERED_BY_QIANKUN__) {
+        __webpack_public_path__ = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__;
+    }
+    ```
+
+- 最后``` main.js ``` 引入封装
+    ```javascript
+    import "./public-path";
+    import { lifeCycle, render } from "./life-cycle";
+    /**
+    * @name 导出微应用生命周期
+    */
+    const { bootstrap, mount, unmount } = lifeCycle();
+    export { bootstrap, mount, unmount };
+
+    /**
+    * @name 不在微前端基座独立运行
+    */
+    const __qiankun__ = window.__POWERED_BY_QIANKUN__;
+    __qiankun__ || render();
+    ```
+  > 子应用 ``` life-cycle.js ``` 中引入了 ``` import appStore from "./utils/app-store"; ```这里的app-store和主应用的一样、在相同的位置重新复制一份即可
+
+#### ``` qiankun 环境搭建好了,接下来  分别  进入主应用和子应用启动项目 yarn serve 然后访问主应用、没有问题的话应该两个项目的页面都出来了、接下来我说下我做集成时候遇到的问题```
+
 
 
 

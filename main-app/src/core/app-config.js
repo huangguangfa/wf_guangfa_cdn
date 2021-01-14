@@ -7,7 +7,7 @@
 const noAuthApps = [
   {
     module: "subapp-sys",
-    defaultRegister: true, //默认注册
+    defaultRegister: false, //默认注册
     devEntry: "http://localhost:6002",
     depEntry: "http://106.54.70.48:6002",
     routerBase: "/sys",

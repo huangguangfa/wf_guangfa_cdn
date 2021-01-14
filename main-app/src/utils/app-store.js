@@ -25,7 +25,7 @@ const appStore = ( initGlobalState ) => {
      * @description 将监听到的数据存入vuex
      */
     onGlobalStateChange((value) => {
-        console.log('[onGlobalStateChange - master]:', value);
+        console.log('[主应用收到消息]:', value);
         //进行登陆成功
         if( value.ignore === 'subapp-login' ){
             store.commit('user/SET_LOGIN_VALUE',true)
