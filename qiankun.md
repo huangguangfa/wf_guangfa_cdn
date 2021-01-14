@@ -330,6 +330,17 @@ new Vue({
 
 #### ``` qiankun 环境搭建好了,接下来  分别  进入主应用和子应用启动项目 yarn serve 然后访问主应用、没有问题的话应该两个项目的页面都出来了、接下来我说下我做集成时候遇到的问题```
 
+>问题一，挂载微应用的容器节点找不到 ```#subapp-viewport 、添加一个你设置应用挂载container的dom节点就好``` 
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/144bba1a35084d6d992325b5ca19eaa8~tplv-k3u1fbpfcp-watermark.image)
+>问题二，主应用代理的地址如果和子应用proxy的接口匹配如果和路由前缀一样的话、页面进行一个刷新操作后的一个页面错误 ```感谢wl提前踩坑、哈哈哈 ```
+ 
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1687f0cbf28449679d1ac25672602f2b~tplv-k3u1fbpfcp-watermark.image)
+配置主应用vue.config.js的devServer为proxy添加一个函数绕过代理、``` 浏览器请求，希望返回的是HTML页面 ```
+![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/adbe47cd6a2349159b6212e228f8b9ab~tplv-k3u1fbpfcp-watermark.image)
+> 问题三，某个子应用服务没启动、没有获取到资源
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5cbb9bca2db84d3a807eb02b3c2724f9~tplv-k3u1fbpfcp-watermark.image)
+> 问题四、子应用给其他应用传输数据时候、主应用里面提前定义通信的key、所以接收不到数据、解决：```在使用通信方法 initGlobalState({...}) 定义好需要通信的key就好、按定义好的约定进行传输数据```
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9575bca6acb544c49a6162b63f875a18~tplv-k3u1fbpfcp-watermark.image)
 
 
 
