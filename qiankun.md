@@ -343,6 +343,10 @@ new Vue({
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9575bca6acb544c49a6162b63f875a18~tplv-k3u1fbpfcp-watermark.image)
 
 
+## 目前就遇到这些问题、也欢迎留言区评论自己遇到的问题、顺便把qiankun的常见问题贴出来 https://qiankun.umijs.org/zh/faq
+
+
+
 
 
 
