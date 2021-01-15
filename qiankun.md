@@ -343,7 +343,57 @@ new Vue({
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9575bca6acb544c49a6162b63f875a18~tplv-k3u1fbpfcp-watermark.image)
 
 
-## 目前就遇到这些问题、也欢迎留言区评论自己遇到的问题、顺便把qiankun的常见问题贴出来 https://qiankun.umijs.org/zh/faq
+> 目前就遇到这些问题、也欢迎留言区评论自己遇到的问题、顺便把qiankun的常见问题贴出来 https://qiankun.umijs.org/zh/faq
+
+## 编写应用指令脚本```一键式 [ 启动、依赖安装、打包 】 ```
+
+> 上面讲到、我们需要一个一个应用下进行yarn serve下、这样是很不方便的、应用一多我们启动就成了很麻烦的一件事情、所以我们需要重新写一个yarn脚本文件、目的就是让他去自动帮我们执行启动脚本命令 （其中包括 启动 打包 安装依赖）
+- 第一步在```整个```应用项目下生成一个```package.json```配置scripts脚本文件、package.json与每个项目同级位置
+	```javascript
+    yarn init //然后按提示执行下去
+    ```
+    - 添加scripts脚本配置 ``` 下面是定一个start指令然后去执行config下的start.js```
+    ```
+    "scripts": {
+      "start":"node config/start.js"
+    }
+  ```
+- 第二步在、我们需要在package.json```同级```下创建一个```config```文件夹、同时往文件里面添加一个```start.js```
+  ```
+  mkdir config
+  cd config 
+  touch start.js
+  ```
+- 第三步往start.js随便输出一个console.log('yarn serve'),然后在整个项目启动终端执行一下 ```yarn start ```正常输出 yarn serve 、然后我们需要开始编写```一键启动脚本 需求就是执行脚本、脚本自动帮我们在每个项目中去执行 yarn serve ```
+	
+    - ```start.js```
+    
+  ``` javascript
+  const fs = require('fs');
+  const path = require('path');
+  const util = require('util');
+  const sub_app_ath = path.resolve();
+  const sub_apps = fs.readdirSync(sub_app_ath).filter(i => /^sub|main/.test(i));
+  console.log('\033[42;30m 启动中 \033[40;32m 即将进入所有模块并启动服务：' + JSON.stringify(sub_apps) + 'ing...\033[0m')
+  const exec = util.promisify( require('child_process').exec );
+  async function start() {
+    sub_apps.forEach( file_name => {
+      exec('yarn serve', { cwd: path.resolve( file_name )});
+    });
+  };
+  start();
+  setTimeout( () =>{
+    console.log('\033[42;30m 访问 \033[40;32m http://localhost:6001 \033[0m')
+  },5000)
+
+  ```
+  
+  ```先通过正则读取到主应用和子应用文件夹名称、然后使用 child_process模块异步创建子进程 通过这个返回的方法我们可以去执行一个 指令 并且传入一个在那执行的路径 util.promisify把方法封装成promise返回形式 ``` 
+  > 这里我有个小问题、我有尝试过去找每一个子应用是否成功开启的操作、但是没找到合适的方法、希望有人知道的可以告知我下啦、谢谢、所以我在最后写了一个setTimeout....
+  
+  ### 好啦、目前一键启动就写完了、其他的都是一样的操作、只是创建的文件夹和scripts的脚本命令改下、哦对还有```exec下的指令换成对应的 ``` 剩下就是执行shell脚本进行服务器上传部署
+  
+    
 
 
 
