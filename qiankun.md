@@ -20,7 +20,7 @@
 
 ### 需求分析
  - 除了这些、从项目的需求和系统的数量微前端非常适合我们、我们一共有七个系统、每个用户因为角色权限、所管理的系统也是不一样的、张三负责两个系统权限、李四负责一个系统、也可能王五负责一个系统的其中某几个菜单权限等...如果全部系统写到一个项目可想而至...代码量...项目维护..性能.都是非常难折腾！下面放一张我们的系统UI图
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/433648f7ea4a4d94b664c9f6683adac5~tplv-k3u1fbpfcp-watermark.image)
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/357d09dc329c4cc08f01a1509fbf0002~tplv-k3u1fbpfcp-watermark.image)
 由于那啥所以打了码、顶部是所有系统、左侧是当前系统的菜单栏、从UI的设计图上看这个项目是很适合微前端！后面我会用基座（微前端环境）和子应用与主应用去介绍我的踩坑之路-😄
 
 ## 技术选型与项目的整体规划
@@ -214,121 +214,124 @@ new Vue({
 
  ## 子应用环境
  
- - 第一步使用官方脚手架把项目创建好、和主应用同理选择默认的 ``` Default ([Vue 2] babel ``` 进行创建项目
-   ```
-    vue create subapp-sys
-   ```
- + 第二步我们改造下脚手架默认的模块和打包后的格式配置、还有给qiankun导出对应的生命周期函数 ``` 修改打包配置 -  vue.config.js ```
- 
-    
-    ``` javascript
-    const { name } = require('./package');
-    module.exports = {
-      devServer: {
-        hot: true,
-        disableHostCheck: true,
-        port:6002,
-        overlay: {
-            warnings: false,
-            errors: true,
-        },
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-        //防止单体项目刷新后404
-        historyApiFallback:true,
+- 第一步使用官方脚手架把项目创建好、和主应用同理选择默认的 ``` Default ([Vue 2] babel ``` 进行创建项目
+ ```
+  vue create subapp-sys
+ ```
++ 第二步我们改造下脚手架默认的模块和打包后的格式配置、还有给qiankun导出对应的生命周期函数 ``` 修改打包配置 -  vue.config.js ```
+
+
+``` javascript
+const { name } = require('./package');
+module.exports = {
+  devServer: {
+    hot: true,
+    disableHostCheck: true,
+    port:6002,
+    overlay: {
+        warnings: false,
+        errors: true,
     },
-      configureWebpack: {
-        output: {
-          library: `${name}-[name]`,
-          libraryTarget: 'umd',// 把微应用打包成 umd 库格式
-          jsonpFunction: `webpackJsonp_${name}`,
-        },
-      },
-    };
-   ```
-  - 第三步同src下创建一个导出qiankun的js文件、统一管理，名叫 ```life-cycle.js ```
-   
-    ``` javascript
-    import App from "./App.vue";
-    import store from "./store";
-    import selfRoutes from "./router";
-    //导入官方通信方法 和 主应用的一样把应用通信封装到一个js文件独立管理
-    import appStore from "./utils/app-store";
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+    },
+    //防止单体项目刷新后404
+    historyApiFallback:true,
+},
+  configureWebpack: {
+    output: {
+      library: `${name}-[name]`,
+      libraryTarget: 'umd',// 把微应用打包成 umd 库格式
+      jsonpFunction: `webpackJsonp_${name}`,
+    },
+  },
+};
+```
+- 第三步同src下创建一个导出qiankun的js文件、统一管理，名叫 ```life-cycle.js ```
 
-    const __qiankun__ = window.__POWERED_BY_QIANKUN__;
-    let router = null;
-    let instance = null;
+``` javascript
+import App from "./App.vue";
+import store from "./store";
+import selfRoutes from "./router";
+//导入官方通信方法 和 主应用的一样把应用通信封装到一个js文件独立管理
+import appStore from "./utils/app-store";
 
-    /**
-     * @name 导出qiankun生命周期函数
-     */
-    const lifeCycle = () => {
-      return {
-        async bootstrap() {},
-        //应用每次进入都会调用 mount 方法，通常我们在这里触发应用的渲染方法
-        async mount( props ) {
-            // 注册应用间通信
-            appStore(props);
-            // 注册微应用实例化函数
-            render(props);
-        },
-        //微应用卸载
-        async unmount() {
-            instance.$destroy?.();
-            instance = null;
-            router = null;
-        },
-      //主应用手动更新微应用
-        async update(props) {
-            console.log("update props", props);
-        }
-      };
-    };
+const __qiankun__ = window.__POWERED_BY_QIANKUN__;
+let router = null;
+let instance = null;
 
-    //子应用实例化函数 routerBase container是通过主应用props传入过来的数据
-    const render = ({ routerBase, container } = {}) => {
-        Vue.config.productionTip = false;
-        router = new VueRouter({
-            base: __qiankun__ ? routerBase : "/",
-            mode: "history",
-            routes: selfRoutes
-        });
-        instance = new Vue({
-            router,
-            store,
-            render: h => h(App)
-        }).$mount(container ? container.querySelector("#sys") : "#sys");
-    };
-
-    export { lifeCycle, render };
-    ```
-- 第四步 接下来src目录新增 ```public-path.js ```
-    ```javascript
-    if (window.__POWERED_BY_QIANKUN__) {
-        __webpack_public_path__ = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__;
+/**
+ * @name 导出qiankun生命周期函数
+ */
+const lifeCycle = () => {
+  return {
+    async bootstrap() {},
+    //应用每次进入都会调用 mount 方法，通常我们在这里触发应用的渲染方法
+    async mount( props ) {
+        // 注册应用间通信
+        appStore(props);
+        // 注册微应用实例化函数
+        render(props);
+    },
+    //微应用卸载
+    async unmount() {
+        instance.$destroy?.();
+        instance = null;
+        router = null;
+    },
+  //主应用手动更新微应用
+    async update(props) {
+        console.log("update props", props);
     }
-    ```
+  };
+};
+
+//子应用实例化函数 routerBase container是通过主应用props传入过来的数据
+const render = ({ routerBase, container } = {}) => {
+    Vue.config.productionTip = false;
+    router = new VueRouter({
+        base: __qiankun__ ? routerBase : "/",
+        mode: "history",
+        routes: selfRoutes
+    });
+    instance = new Vue({
+        router,
+        store,
+        render: h => h(App)
+    }).$mount(container ? container.querySelector("#sys") : "#sys");
+};
+
+export { lifeCycle, render };
+```
+- 第四步 接下来src目录新增 ```public-path.js ```
+```javascript
+if (window.__POWERED_BY_QIANKUN__) {
+    __webpack_public_path__ = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__;
+}
+```
 
 - 最后``` main.js ``` 引入封装
-    ```javascript
-    import "./public-path";
-    import { lifeCycle, render } from "./life-cycle";
-    /**
-    * @name 导出微应用生命周期
-    */
-    const { bootstrap, mount, unmount } = lifeCycle();
-    export { bootstrap, mount, unmount };
+```javascript
+import "./public-path";
+import { lifeCycle, render } from "./life-cycle";
+/**
+* @name 导出微应用生命周期
+*/
+const { bootstrap, mount, unmount } = lifeCycle();
+export { bootstrap, mount, unmount };
 
-    /**
-    * @name 不在微前端基座独立运行
-    */
-    const __qiankun__ = window.__POWERED_BY_QIANKUN__;
-    __qiankun__ || render();
-    ```
+/**
+* @name 不在微前端基座独立运行
+*/
+const __qiankun__ = window.__POWERED_BY_QIANKUN__;
+__qiankun__ || render();
+```
   > 子应用 ``` life-cycle.js ``` 中引入了 ``` import appStore from "./utils/app-store"; ```这里的app-store和主应用的一样、在相同的位置重新复制一份即可
-
+## 我的整个项目结构（使用了vue + react + qiankun)
+![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc96bcbe6e7b4e069aebf2d0b9bb2b79~tplv-k3u1fbpfcp-watermark.image)
+## 遇到的问题
 #### ``` qiankun 环境搭建好了,接下来  分别  进入主应用和子应用启动项目 yarn serve 然后访问主应用、没有问题的话应该两个项目的页面都出来了、接下来我说下我做集成时候遇到的问题```
+
 
 >问题一，挂载微应用的容器节点找不到 ```#subapp-viewport 、添加一个你设置应用挂载container的dom节点就好``` 
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/144bba1a35084d6d992325b5ca19eaa8~tplv-k3u1fbpfcp-watermark.image)
@@ -339,7 +342,7 @@ new Vue({
 ![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/adbe47cd6a2349159b6212e228f8b9ab~tplv-k3u1fbpfcp-watermark.image)
 > 问题三，某个子应用服务没启动、没有获取到资源
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5cbb9bca2db84d3a807eb02b3c2724f9~tplv-k3u1fbpfcp-watermark.image)
-> 问题四、子应用给其他应用传输数据时候、主应用里面提前定义通信的key、所以接收不到数据、解决：```在使用通信方法 initGlobalState({...}) 定义好需要通信的key就好、按定义好的约定进行传输数据```
+> 问题四、子应用给其他应用传输数据时候、主应用里面没有提前定义通信的key、所以接收不到数据、解决：```在主应用注册通信方法 initGlobalState({...}) 定义好需要通信的key就好、按定义好的约定进行传输数据```
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9575bca6acb544c49a6162b63f875a18~tplv-k3u1fbpfcp-watermark.image)
 
 
@@ -347,54 +350,149 @@ new Vue({
 
 ## 编写应用指令脚本```一键式 [ 启动、依赖安装、打包 】 ```
 
-> 上面讲到、我们需要一个一个应用下进行yarn serve下、这样是很不方便的、应用一多我们启动就成了很麻烦的一件事情、所以我们需要重新写一个yarn脚本文件、目的就是让他去自动帮我们执行启动脚本命令 （其中包括 启动 打包 安装依赖）
-- 第一步在```整个```应用项目下生成一个```package.json```配置scripts脚本文件、package.json与每个项目同级位置
-	```javascript
-    yarn init //然后按提示执行下去
-    ```
-    - 添加scripts脚本配置 ``` 下面是定一个start指令然后去执行config下的start.js```
-    ```
-    "scripts": {
-      "start":"node config/start.js"
-    }
-  ```
+> 上面讲到、我们需要一个一个应用下进行yarn serve下、这样是很不方便的、应用一多我们启动就成了很麻烦的一件事情、所以我们需要重新写一个yarn脚本文件、目的就是让他去自动帮我们执行脚本命令 （其中包括 启动 打包 安装依赖）
+- 第一步在```整个```应用项目下生成一个```package.json```配置scripts脚本文件
+```javascript
+yarn init //然后按提示执行下去
+```
+- 添加scripts脚本配置 ``` 下面是定一个start指令然后去执行config下的start.js```
+```
+"scripts": {
+  "start":"node config/start.js"
+}
+```
 - 第二步在、我们需要在package.json```同级```下创建一个```config```文件夹、同时往文件里面添加一个```start.js```
-  ```
-  mkdir config
-  cd config 
-  touch start.js
-  ```
+```
+mkdir config
+cd config 
+touch start.js
+```
 - 第三步往start.js随便输出一个console.log('yarn serve'),然后在整个项目启动终端执行一下 ```yarn start ```正常输出 yarn serve 、然后我们需要开始编写```一键启动脚本 需求就是执行脚本、脚本自动帮我们在每个项目中去执行 yarn serve ```
-	
-    - ```start.js```
-    
-  ``` javascript
-  const fs = require('fs');
-  const path = require('path');
-  const util = require('util');
-  const sub_app_ath = path.resolve();
-  const sub_apps = fs.readdirSync(sub_app_ath).filter(i => /^sub|main/.test(i));
-  console.log('\033[42;30m 启动中 \033[40;32m 即将进入所有模块并启动服务：' + JSON.stringify(sub_apps) + 'ing...\033[0m')
-  const exec = util.promisify( require('child_process').exec );
-  async function start() {
-    sub_apps.forEach( file_name => {
-      exec('yarn serve', { cwd: path.resolve( file_name )});
-    });
-  };
-  start();
-  setTimeout( () =>{
-    console.log('\033[42;30m 访问 \033[40;32m http://localhost:6001 \033[0m')
-  },5000)
 
-  ```
-  
-  ```先通过正则读取到主应用和子应用文件夹名称、然后使用 child_process模块异步创建子进程 通过这个返回的方法我们可以去执行一个 指令 并且传入一个在那执行的路径 util.promisify把方法封装成promise返回形式 ``` 
-  > 这里我有个小问题、我有尝试过去找每一个子应用是否成功开启的操作、但是没找到合适的方法、希望有人知道的可以告知我下啦、谢谢、所以我在最后写了一个setTimeout....
-  
-  ### 好啦、目前一键启动就写完了、其他的都是一样的操作、只是创建的文件夹和scripts的脚本命令改下、哦对还有```exec下的指令换成对应的 ``` 剩下就是执行shell脚本进行服务器上传部署
-  
-    
+- ```start.js```
 
+``` javascript
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const sub_app_ath = path.resolve();
+const sub_apps = fs.readdirSync(sub_app_ath).filter(i => /^sub|main/.test(i));
+console.log('\033[42;30m 启动中 \033[40;32m 即将进入所有模块并启动服务：' + JSON.stringify(sub_apps) + 'ing...\033[0m')
+const exec = util.promisify( require('child_process').exec );
+async function start() {
+sub_apps.forEach( file_name => {
+  exec('yarn serve', { cwd: path.resolve( file_name )});
+});
+};
+start();
+setTimeout( () =>{
+console.log('\033[42;30m 访问 \033[40;32m http://localhost:6001 \033[0m')
+},5000)
+
+```
+
+```先通过正则读取到主应用和子应用文件夹名称、然后使用 child_process模块异步创建子进程 通过这个返回的方法我们可以去执行一个 指令 并且传入一个在那执行的路径 util.promisify把方法封装成promise返回形式 ``` 
+> 这里我有个小问题、我有尝试过去找每一个子应用是否成功开启的操作、但是没找到合适的方法、希望有人知道的可以告知我下啦、谢谢、所以我在最后写了一个setTimeout....
+
+### 好啦、目前一键启动就写完了、其他的都是一样的操作、只是创建的文件夹和scripts的脚本命令改下、哦对还有```exec下的指令换成对应的 ``` 剩下就是执行shell脚本进行服务器上传部署
+
+
+## shell脚本完成自动打包和上传至服务器、关于shell语法大家可以看 [菜鸟shell教程](https://www.runoob.com/linux/linux-shell.html "")
+- 在整体项目下新建一个 deploy.sh 文件
+
+``` deploy.sh ```
+```sh
+set -e
+shFilePath=$(cd `dirname $0`; pwd)
+# 系统列表名称
+sysList=('app' 'car' 'login' 'sys' 'user' 'all')
+IP="106.54.xx.xx"
+uploadPath="/gf_docker/nginx/web"
+#获取当前分支
+branch=$(git symbolic-ref --short HEAD)
+#开始
+echo "\033[35m 当前分支是：${branch} \033[0m"
+read -p $'\033[36m 准备进行自动化部署操作、是否继续 y or n  \033[0m ' isbuild
+if [ "$isbuild" != 'y' ];then
+    exit
+fi
+echo "\033[36m 目前四个个系统 \033[0m \033[35m【 ${sysList[*]} 】 \033[0m "
+read -p $'\033[36m 请选择部署的项目 或 输入 all \033[0m' changeSysName
+isSys=$(echo "${sysList[@]}" | grep -wq "${changeSysName}" &&  echo "yes" || echo "no")
+#是否存在系统
+if [ "$isSys" == 'no' ];then
+    echo "\033[31m 没有对应的系统、已退出 \033[0m"
+    exit
+fi
+
+#没有buildFile文件夹的话就新建一个
+if [ -d "$shFilePath/buildFile" ]; then
+    rm -rf './buildFile/'
+    mkdir "buildFile"  
+else
+    mkdir "buildFile" 
+fi;
+
+#项目文件夹名称
+fileName=""
+#打包
+function build() {
+    cd $1
+    echo "\033[32m $1准备打包... \033[0m" 
+    yarn build 
+    echo $1/$2
+    mv $shFilePath/$1/$2 $shFilePath/buildFile
+    echo "\033[32m $1打包成功、包移动至buildFile \033[0m" 
+}
+#上传服务器
+function uploadServe() {
+    echo "\033[32m 准备上传服务器,地址：$uploadPath \033[0m"
+    rsync -a -e "ssh -p 22" $shFilePath/buildFile*  root@$IP:$uploadPath
+    echo "\033[32m 自动化部署成功！ \033[0m"
+}
+#单个项目部署文件名转换
+function getFileName() {
+    case $1 in
+        'app')
+            fileName="main-app";;
+        'car')
+            fileName="subapp-car";;
+        'login')
+            fileName="subapp-login";;
+        'sys')
+            fileName="subapp-sys";;
+        'user')
+            fileName="subapp-user";;
+        *)
+            echo "error"
+    esac
+}
+#按需打包
+if [ "$changeSysName" == 'all' ];then
+    for i in "${sysList[@]}"; do
+        if [ "$i" != 'app' ];then
+            cd ..
+        fi
+        if [ "$i" != 'all' ];then
+            getFileName $i
+            build $fileName $i
+        fi
+    done
+else
+    getFileName $changeSysName
+    build $fileName $changeSysName
+fi
+
+#部署
+uploadServe 
+```
+
+语法和菜鸟现学的、也只是代替双手进行一系列的操作、上传服务器的时候需要输入下密码、如果不想输入可在服务端配置密钥、类似git一样！
+
+>最后我们也可以通过配置、脚本指令去执行我们的sh文件、在package.json的scripts添加一个"deploy": "sh deploy.sh" 最后需要部署测试环境的时候直接执行 yarn deploy
+    
+## 最后
+> 最后我要去进行项目的重构工作了、这些也是我下班后自己通过整理自己玩的demo进行的写的一篇踩坑文章、我相信在重构公司项目的时候踩的坑肯定不止这些到时候我统一在、遇到的问题那进行补充！```加油、折腾人```
 
 
 

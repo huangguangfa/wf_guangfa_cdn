@@ -13,10 +13,13 @@ const exec = util.promisify( require('child_process').exec );
 
 async function start() {
     sub_apps.forEach(  i => {
-        exec('npm run start', { cwd: path.resolve(i) } )
+        exec('npm run start', { cwd: path.resolve(i) }).then( res =>{
+            console.log(res)
+        })
     });
 };
 start();
+
 setTimeout( () =>{
   console.log('\033[42;30m 访问 \033[40;32m http://localhost:6001 \033[0m')
 },5000)
